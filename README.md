@@ -133,4 +133,4 @@ Regenerate the MySQL schema files after model changes with:
 
 Version 0.2 prioritizes polished breadth before production depth. Advanced OCR, real fulfillment, payment, public emergency QR access, production notification channels, and full map/provider integrations remain Version 1.0+ work.
 
-<sub>(c) Siddarth N Shenoy, 2026</sub>
+
