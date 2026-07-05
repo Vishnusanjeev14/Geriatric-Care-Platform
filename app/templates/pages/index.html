@@ -1,0 +1,38 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}CareConnect Foundation{% endblock %}
+
+{% block content %}
+  <section class="foundation-hero" aria-labelledby="foundation-title">
+    <div class="foundation-hero__content">
+      <p class="eyebrow">CareConnect V0.2</p>
+      <h1 id="foundation-title">Family care, beautifully connected.</h1>
+      <p class="lede">
+        Manage medicines, appointments, caretakers, emergency information,
+        home services, and family activity from one healthcare workspace.
+      </p>
+      <div class="hero-actions">
+        <a class="button-link" href="{{ url_for('auth.login') }}">Sign in</a>
+        <a class="secondary-link" href="{{ url_for('auth.signup') }}">Create account</a>
+      </div>
+      <div class="status-grid" aria-label="Demo accounts">
+        <div class="status-tile">
+          <span class="status-tile__label">Family demo</span>
+          <strong>Emma Wilson</strong>
+          <span class="muted">family@careconnect.test</span>
+        </div>
+        <div class="status-tile">
+          <span class="status-tile__label">Healthcare demo</span>
+          <strong>Northstar Health</strong>
+          <span class="muted">healthcare@careconnect.test</span>
+        </div>
+        <div class="status-tile">
+          <span class="status-tile__label">Caretaker demo</span>
+          <strong>Sophia Brown</strong>
+          <span class="muted">caretaker@careconnect.test</span>
+        </div>
+      </div>
+      <p class="muted">Demo password: CareConnect@123</p>
+    </div>
+  </section>
+{% endblock %}

@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}CareConnect{% endblock %}</title>
+    <script>
+      document.documentElement.dataset.theme = localStorage.getItem("careconnect-theme") || "dark";
+      document.documentElement.dataset.language = localStorage.getItem("careconnect-language") || "en";
+    </script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+  </head>
+  <body class="auth-body">
+    <div class="auth-preferences" aria-label="Display preferences">
+      <button class="utility-toggle" type="button" data-language-toggle aria-label="Switch language">தமிழ்</button>
+      <button class="utility-toggle" type="button" data-theme-toggle aria-label="Toggle light and dark mode">Light</button>
+    </div>
+    <main class="auth-shell">
+      {% include "components/flash_messages.html" %}
+      {% block content %}{% endblock %}
+    </main>
+    <footer class="site-credit site-credit--auth" aria-label="Project credit">
+      (c) Siddarth N Shenoy, 2026
+    </footer>
+    <script src="{{ url_for('static', filename='js/base.js') }}" defer></script>
+  </body>
+</html>

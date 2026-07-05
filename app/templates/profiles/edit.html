@@ -1,0 +1,15 @@
+{% extends "layouts/base.html" %}
+{% block title %}Edit Profile - CareConnect{% endblock %}
+{% block content %}
+<section class="page-heading"><p class="eyebrow">Profile</p><h1>Edit {{ profile.display_name }}</h1></section>
+<form class="form-card" method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label>Name <input name="display_name" value="{{ profile.display_name }}" required></label>
+  <label>Relationship <input name="relationship_label" value="{{ profile.relationship_label }}"></label>
+  <label>Blood group <input name="blood_group" value="{{ profile.blood_group or '' }}"></label>
+  <label>Status <select name="health_status"><option value="stable">Stable</option><option value="attention">Attention</option><option value="critical">Critical</option></select></label>
+  <label>Primary hospital <input name="primary_hospital" value="{{ profile.primary_hospital or '' }}"></label>
+  <label>Care note <textarea name="primary_care_note">{{ profile.primary_care_note or '' }}</textarea></label>
+  <button class="button-link" type="submit">Save changes</button>
+</form>
+{% endblock %}

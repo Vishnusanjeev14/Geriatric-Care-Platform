@@ -1,0 +1,25 @@
+{% extends "layouts/base.html" %}
+{% block title %}Inventory - CareConnect{% endblock %}
+{% block content %}
+<section class="page-heading">
+  <div><p class="eyebrow">Inventory</p><h1>Stock management</h1><p class="lede">Update branch stock and monitor low inventory. Master data comes from the Excel medicine catalogue.</p></div>
+  <a class="secondary-link" href="{{ url_for('healthcare.dashboard') }}">Dashboard</a>
+</section>
+<section class="dashboard-grid">
+  {% for item in inventory %}
+    <article class="card">
+      <p><span class="chip {% if item.status == 'low_stock' %}chip--amber{% endif %}">{{ item.status|replace("_", " ")|title }}</span></p>
+      <h2>{{ item.medicine.name }}</h2>
+      <p>{{ item.branch_name }} · {{ item.medicine.pack_size }}</p>
+      <p class="big-stat">{{ item.quantity_on_hand }}</p>
+      <p class="muted">Minimum stock {{ item.reorder_level }} · {{ item.medicine.expiry_placeholder }}</p>
+      <form method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="item_id" value="{{ item.id }}">
+        <label>Adjust stock <input name="quantity_delta" type="number" value="10"></label>
+        <button class="button-link" type="submit">Update stock</button>
+      </form>
+    </article>
+  {% endfor %}
+</section>
+{% endblock %}

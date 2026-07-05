@@ -1,0 +1,85 @@
+{% extends "layouts/base.html" %}
+{% block title %}Healthcare Portal - CareConnect{% endblock %}
+{% block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">Healthcare organization</p>
+    <h1>Northstar Health Operations</h1>
+    <p class="lede">Branch inventory, medicine orders, stock alerts, and catalogue operations in one workspace.</p>
+  </div>
+  <div class="hero-actions">
+    <a class="button-link" href="{{ url_for('healthcare.inventory') }}">Manage inventory</a>
+    <a class="secondary-link" href="{{ url_for('pharmacy.catalogue') }}">Master catalogue</a>
+  </div>
+</section>
+
+<section class="summary-strip">
+  <div class="summary-card"><span>Branches</span><strong>3</strong></div>
+  <div class="summary-card"><span>Active orders</span><strong>{{ orders|length }}</strong></div>
+  <div class="summary-card"><span>Low stock</span><strong>{{ inventory|selectattr("status", "equalto", "low_stock")|list|length }}</strong></div>
+  <div class="summary-card"><span>Catalogue items</span><strong>1200+</strong></div>
+</section>
+
+<section class="dashboard-grid">
+  <article class="card">
+    <h2>Branch switcher</h2>
+    <p><span class="chip">Northstar Pharmacy - Downtown</span></p>
+    <p><span class="chip chip--lavender">Harborview Pharmacy</span></p>
+    <p><span class="chip">Lakeside Clinic</span></p>
+  </article>
+  <article class="card">
+    <h2>Low stock</h2>
+    {% for item in inventory if item.status == "low_stock" %}
+      <p><strong>{{ item.medicine.name }}</strong><br>{{ item.quantity_on_hand }} left | minimum {{ item.reorder_level }}</p>
+    {% else %}<p>No low stock alerts.</p>{% endfor %}
+  </article>
+  <article class="card">
+    <h2>Inventory analytics</h2>
+    <p class="big-stat">94%</p>
+    <p class="muted">Catalogue availability across active branches.</p>
+  </article>
+  <article class="card wide">
+    <h2>Incoming medicine orders</h2>
+    <div class="order-worklist">
+      {% for order in orders %}
+        <article class="order-work-card">
+          <div class="order-work-card__summary">
+            <div>
+              <p class="eyebrow">Order #{{ order.id }}</p>
+              <h2>Rs. {{ order.total_amount }}</h2>
+            </div>
+            <span class="chip {% if order.status == 'preparing' %}chip--lavender{% elif order.status == 'confirmed' %}chip--amber{% endif %}">{{ order.status|title }}</span>
+          </div>
+          <p class="muted">{{ order.items|length }} item(s) | {{ order.delivery_address }}</p>
+          <div class="order-items">
+            {% for item in order.items[:3] %}
+              <span>{{ item.quantity }} x {{ item.medicine_name_snapshot }}</span>
+            {% endfor %}
+            {% if order.items|length > 3 %}
+              <span>+{{ order.items|length - 3 }} more</span>
+            {% endif %}
+          </div>
+          <form class="order-status-form" method="post" action="{{ url_for('healthcare.update_order', order_id=order.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label>Status
+              <select name="status">
+                <option value="confirmed" {% if order.status == "confirmed" %}selected{% endif %}>confirmed</option>
+                <option value="preparing" {% if order.status == "preparing" %}selected{% endif %}>preparing</option>
+                <option value="completed" {% if order.status == "completed" %}selected{% endif %}>completed</option>
+                <option value="cancelled" {% if order.status == "cancelled" %}selected{% endif %}>cancelled</option>
+              </select>
+            </label>
+            <button class="button-link" type="submit">Update</button>
+          </form>
+        </article>
+      {% else %}
+        <p>No incoming orders.</p>
+      {% endfor %}
+    </div>
+  </article>
+  <article class="card">
+    <h2>Reports</h2>
+    <p>Stock movement history, expired medicines, incoming requests, and branch performance are ready for deeper Version 1.0 reports.</p>
+  </article>
+</section>
+{% endblock %}

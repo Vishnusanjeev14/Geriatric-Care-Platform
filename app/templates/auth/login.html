@@ -1,0 +1,29 @@
+{% extends "layouts/auth.html" %}
+{% block title %}Login - CareConnect{% endblock %}
+{% block content %}
+<section class="auth-card">
+  <div class="auth-brand">
+    <img class="brand__logo" src="{{ url_for('static', filename='images/careconnect-logo.png') }}" alt="" aria-hidden="true">
+    <strong>CareConnect</strong>
+  </div>
+  <p class="eyebrow">Welcome back</p>
+  <h1>Sign into your care workspace.</h1>
+  <form class="auth-form" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>Email <input name="email" type="email" required autocomplete="email"></label>
+    <label>Password <input name="password" type="password" required autocomplete="current-password"></label>
+    <button class="button-link" type="submit">Login</button>
+    <div class="auth-links">
+      <a href="{{ url_for('auth.signup') }}">Create account</a>
+      <a href="#">Forgot password?</a>
+    </div>
+  </form>
+  <div class="demo-credentials">
+    <strong>Demo credentials</strong>
+    <p>Family: family@careconnect.test</p>
+    <p>Healthcare: healthcare@careconnect.test</p>
+    <p>Caretaker: caretaker@careconnect.test</p>
+    <p>Password: CareConnect@123</p>
+  </div>
+</section>
+{% endblock %}

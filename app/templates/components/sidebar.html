@@ -1,0 +1,43 @@
+<aside class="sidebar" data-sidebar hidden aria-label="Application navigation">
+  <div class="sidebar__header">
+    <div class="brand">
+      <img class="brand__logo" src="{{ url_for('static', filename='images/careconnect-logo.png') }}" alt="" aria-hidden="true">
+      <span class="brand__text">CareConnect</span>
+    </div>
+    <button class="icon-button" type="button" aria-label="Close navigation" data-sidebar-close>x</button>
+  </div>
+  <nav class="sidebar__nav">
+    {% if current_account and current_account.account_type == "family" and active_profile %}
+      {% set endpoint = request.endpoint or "" %}
+      <div class="sidebar-profile">
+        <span>Managing</span>
+        <label class="profile-switcher">
+          <select aria-label="Switch active profile" data-profile-switcher>
+            {% for profile in managed_profiles %}
+              <option value="{{ url_for('profiles.select', profile_id=profile.id) }}" {% if active_profile and active_profile.id == profile.id %}selected{% endif %}>{{ profile.display_name }}</option>
+            {% endfor %}
+            <option value="{{ url_for('profiles.new_profile') }}">+ Add Profile</option>
+          </select>
+        </label>
+      </div>
+      <a data-nav-link class="{% if endpoint == 'profiles.dashboard' %}is-active{% endif %}" href="{{ url_for('profiles.dashboard', profile_id=active_profile.id) }}"><span>D</span> Dashboard</a>
+      <a data-nav-link class="{% if endpoint.startswith('pharmacy.') or endpoint.startswith('ocr.') %}is-active{% endif %}" href="{{ url_for('pharmacy.schedules') }}"><span>M</span> Medicines</a>
+      <a data-nav-link class="{% if endpoint.startswith('hospitals.') %}is-active{% endif %}" href="{{ url_for('hospitals.list_hospitals') }}"><span>H</span> Hospitals</a>
+      <a data-nav-link class="{% if endpoint.startswith('care.') %}is-active{% endif %}" href="{{ url_for('care.requests') }}"><span>K</span> Caretaker</a>
+      <a data-nav-link class="{% if endpoint.startswith('home_services.') %}is-active{% endif %}" href="{{ url_for('home_services.services') }}"><span>S</span> Home Services</a>
+      <a data-nav-link class="{% if endpoint.startswith('family.') %}is-active{% endif %}" href="{{ url_for('family.family_view') }}"><span>F</span> Family</a>
+      <a data-nav-link class="{% if endpoint == 'profiles.timeline' %}is-active{% endif %}" href="{{ url_for('profiles.timeline', profile_id=active_profile.id) }}"><span>R</span> Reports</a>
+      <a data-nav-link class="{% if endpoint == 'profiles.sharing' or endpoint == 'profiles.edit' %}is-active{% endif %}" href="{{ url_for('profiles.sharing', profile_id=active_profile.id) }}"><span>P</span> Settings</a>
+    {% elif current_account and current_account.account_type == "healthcare" %}
+      {% set endpoint = request.endpoint or "" %}
+      <a data-nav-link class="{% if endpoint == 'healthcare.dashboard' %}is-active{% endif %}" href="{{ url_for('healthcare.dashboard') }}"><span>D</span> Dashboard</a>
+      <a data-nav-link class="{% if endpoint == 'healthcare.inventory' %}is-active{% endif %}" href="{{ url_for('healthcare.inventory') }}"><span>I</span> Inventory</a>
+    {% elif current_account and current_account.account_type == "caretaker" %}
+      <a data-nav-link class="is-active" href="{{ url_for('caretaker_portal.dashboard') }}"><span>D</span> Dashboard</a>
+    {% elif current_account %}
+      <a data-nav-link class="{% if request.endpoint == 'profiles.choose' %}is-active{% endif %}" href="{{ url_for('profiles.choose') }}"><span>S</span> Select Profile</a>
+      <a data-nav-link class="{% if request.endpoint == 'profiles.new_profile' %}is-active{% endif %}" href="{{ url_for('profiles.new_profile') }}"><span>+</span> Add Profile</a>
+    {% endif %}
+  </nav>
+</aside>
+<div class="sidebar-backdrop" data-sidebar-backdrop hidden></div>

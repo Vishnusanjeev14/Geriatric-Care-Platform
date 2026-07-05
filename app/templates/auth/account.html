@@ -1,0 +1,20 @@
+{% extends "layouts/base.html" %}
+{% block title %}Account Profile - CareConnect{% endblock %}
+{% block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">Account Profile</p>
+    <h1>Edit your account.</h1>
+    <p class="lede">Update the account details used for this CareConnect workspace.</p>
+  </div>
+</section>
+
+<form class="form-card" method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label>Full name <input name="full_name" value="{{ account.full_name }}" required></label>
+  <label>Email <input name="email" type="email" value="{{ account.email }}" required autocomplete="email"></label>
+  <label>Phone <input name="phone" value="{{ account.phone or '' }}" autocomplete="tel"></label>
+  <label>Workspace <input value="{{ account.account_type|title }}" disabled></label>
+  <button class="button-link" type="submit">Save changes</button>
+</form>
+{% endblock %}

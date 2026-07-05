@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="dark light">
+    <title>{% block title %}CareConnect{% endblock %}</title>
+    <script>
+      document.documentElement.dataset.theme = localStorage.getItem("careconnect-theme") || "dark";
+      document.documentElement.dataset.language = localStorage.getItem("careconnect-language") || "en";
+    </script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    {% block head %}{% endblock %}
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    {% include "components/navbar.html" %}
+    {% include "components/sidebar.html" %}
+    <main id="main-content" class="app-shell" tabindex="-1">
+      {% include "components/flash_messages.html" %}
+      {% block content %}{% endblock %}
+    </main>
+    
+    {% set endpoint = request.endpoint or "" %}
+    {% if current_account and not endpoint.startswith("auth.") and (not endpoint.startswith("profiles.") or endpoint == "profiles.dashboard") %}
+      <button class="care-assistant-button" type="button" aria-label="Open Care Assistant" data-assistant-toggle>
+        <span aria-hidden="true"></span>
+      </button>
+      <section class="care-assistant-panel" data-assistant-panel hidden aria-label="Care Assistant">
+        <div class="care-assistant-panel__header">
+          <div>
+            <strong>Care Assistant</strong>
+            <p data-assistant-status>Say or type: open pharmacy, add two strips of Paracetamol.</p>
+          </div>
+          <button class="icon-button" type="button" aria-label="Close Care Assistant" data-assistant-close>x</button>
+        </div>
+        <form class="care-assistant-form" data-assistant-form>
+          <input name="assistant_command" data-assistant-input placeholder="Type a command..." autocomplete="off">
+          <button class="text-button" type="submit">Run</button>
+          <button class="button-link" type="button" data-assistant-mic>Speak</button>
+        </form>
+      </section>
+    {% endif %}
+    <script src="{{ url_for('static', filename='js/base.js') }}" defer></script>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

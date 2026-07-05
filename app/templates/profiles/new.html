@@ -1,0 +1,26 @@
+{% extends "layouts/base.html" %}
+{% block title %}Add Profile - CareConnect{% endblock %}
+{% block content %}
+<section class="page-heading"><p class="eyebrow">Profile wizard</p><h1>Add a care profile</h1></section>
+<form class="form-card" method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="form-grid">
+    <label>Name <input name="display_name" required></label>
+    <label>Relationship <input name="relationship_label" placeholder="Mother, Father, Grandfather"></label>
+    <label>Date of birth <input name="date_of_birth" type="date" required></label>
+    <label>Gender <select name="gender"><option>female</option><option>male</option><option>other</option></select></label>
+    <label>Blood group <input name="blood_group" maxlength="5"></label>
+    <label>Health status <select name="health_status"><option>stable</option><option>attention</option><option>critical</option></select></label>
+    <label>Primary hospital <input name="primary_hospital"></label>
+    <label>Condition <input name="condition_name" placeholder="Diabetes"></label>
+    <label>Address <input name="line1"></label>
+    <label>City <input name="city"></label>
+    <label>State <input name="state"></label>
+    <label>Postal code <input name="postal_code"></label>
+    <label>Emergency contact <input name="emergency_name"></label>
+    <label>Contact phone <input name="emergency_phone"></label>
+  </div>
+  <label>Care note <textarea name="primary_care_note"></textarea></label>
+  <button class="button-link" type="submit">Create profile</button>
+</form>
+{% endblock %}

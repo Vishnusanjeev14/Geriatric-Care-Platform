@@ -1,0 +1,6 @@
+{% extends "layouts/base.html" %}
+{% block title %}Appointments - CareConnect{% endblock %}
+{% block content %}
+<section class="page-heading"><p class="eyebrow">Appointments</p><h1>Appointment history</h1></section>
+<section class="timeline-list">{% for a in appointments %}<article class="timeline-card"><h2>{{ a.hospital.name }}</h2><p>{{ a.appointment_date }} at {{ a.appointment_time }} · {{ a.reason }} · {{ a.status }}</p></article>{% else %}<p>No appointments yet.</p>{% endfor %}</section>
+{% endblock %}

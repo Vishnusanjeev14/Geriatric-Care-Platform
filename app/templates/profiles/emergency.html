@@ -1,0 +1,11 @@
+{% extends "layouts/base.html" %}
+{% block title %}Emergency Card - CareConnect{% endblock %}
+{% block content %}
+<section class="page-heading"><div><p class="eyebrow">Emergency card</p><h1>{{ profile.display_name }}</h1><p class="lede">One-click critical information for permitted family members.</p></div></section>
+<section class="dashboard-grid">
+  <article class="card"><h2>Blood group</h2><p class="big-stat">{{ profile.blood_group or "Unknown" }}</p><p><span class="chip chip--rose">Emergency ready</span></p></article>
+  <article class="card"><h2>Conditions</h2>{% for c in conditions %}<p>{{ c.name }}</p>{% else %}<p>None recorded.</p>{% endfor %}</article>
+  <article class="card"><h2>Current medicines</h2>{% for s in schedules %}<p>{{ s.medicine.name }} · {{ s.dosage_text }}</p>{% else %}<p>None recorded.</p>{% endfor %}</article>
+  <article class="card"><h2>Emergency contacts</h2>{% for c in contacts %}<p><strong>{{ c.name }}</strong><br>{{ c.relationship }} · {{ c.phone }}</p>{% else %}<p>No contacts.</p>{% endfor %}</article>
+</section>
+{% endblock %}

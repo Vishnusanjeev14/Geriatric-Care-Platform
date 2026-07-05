@@ -1,0 +1,45 @@
+{% extends "layouts/base.html" %}
+{% block title %}Medicine Schedule - CareConnect{% endblock %}
+{% block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">Medicine reminders</p>
+    <h1>Today's medicines for {{ profile.display_name }}.</h1>
+    <p class="lede">Each due dose has its own adherence record and confirmation history.</p>
+  </div>
+  <a class="button-link" href="{{ url_for('pharmacy.catalogue') }}">Add medicine</a>
+</section>
+<section class="dashboard-grid dashboard-grid--two">
+  <article class="card">
+    <h2>Due today</h2>
+    {% for record in records %}
+      <div class="timeline-card">
+        <span class="timeline-dot"></span>
+        <div>
+          <h2>{{ record.schedule.medicine.name }}</h2>
+          <p>{{ record.dose_period }} · {{ record.dose_time }} · {{ record.schedule.quantity_per_dose }} {{ record.schedule.unit }} · {{ record.schedule.food_timing }}</p>
+          <p><span class="chip {% if record.status == 'taken' %}{% elif record.status == 'skipped' %}chip--amber{% endif %}">{{ record.status|title }}</span>{% if record.confirmed_by %} Confirmed by {{ record.confirmed_by.full_name }}{% endif %}</p>
+          <form class="inline-form" method="post" action="{{ url_for('pharmacy.adherence', record_id=record.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <select name="status"><option value="taken">Taken</option><option value="skipped">Skipped</option><option value="missed">Missed</option></select>
+            <input name="notes" placeholder="Optional note">
+            <button class="text-button" type="submit">Confirm</button>
+          </form>
+        </div>
+      </div>
+    {% else %}<p>No medicines due today.</p>{% endfor %}
+  </article>
+  <aside class="card">
+    <h2>Active schedules</h2>
+    {% for schedule in schedules %}
+      <p><strong>{{ schedule.medicine.name }}</strong><br>{{ schedule.timing_text }} · {{ schedule.repeat_pattern }} · {{ schedule.adherence_percent }}%</p>
+    {% else %}<p>No active schedules.</p>{% endfor %}
+  </aside>
+  <article class="card wide">
+    <h2>Adherence history</h2>
+    {% for record in history %}
+      <p>{{ record.dose_date }} · {{ record.dose_time }} · {{ record.schedule.medicine.name }} · <span class="chip">{{ record.status|title }}</span>{% if record.confirmed_by %} · {{ record.confirmed_by.full_name }}{% endif %}</p>
+    {% else %}<p>No adherence history yet.</p>{% endfor %}
+  </article>
+</section>
+{% endblock %}

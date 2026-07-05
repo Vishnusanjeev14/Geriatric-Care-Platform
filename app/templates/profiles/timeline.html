@@ -1,0 +1,6 @@
+{% extends "layouts/base.html" %}
+{% block title %}Timeline - CareConnect{% endblock %}
+{% block content %}
+<section class="page-heading"><div><p class="eyebrow">Health timeline</p><h1>{{ profile.display_name }}</h1><p class="lede">A readable history of medicines, visits, appointments, orders, and family activity.</p></div></section>
+<section class="timeline-list">{% for e in events %}<article class="timeline-card"><span class="timeline-dot"></span><div><span>{{ e.created_at.strftime("%d %b, %I:%M %p") }}</span><h2>{{ e.title }}</h2><p>{{ e.description }}</p></div></article>{% else %}<p>No events yet.</p>{% endfor %}</section>
+{% endblock %}

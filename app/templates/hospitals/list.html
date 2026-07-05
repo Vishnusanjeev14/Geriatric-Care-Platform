@@ -1,0 +1,68 @@
+{% extends "layouts/base.html" %}
+{% block title %}Hospitals - CareConnect{% endblock %}
+{% block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">Nearby care</p>
+    <h1>Hospitals, clinics, and pharmacies.</h1>
+    <p class="lede">Search Chennai hospitals by name, department, or emergency availability. The map stays contained while records remain easy to scan.</p>
+  </div>
+  <div class="hero-actions">
+    {% if active_profile %}
+      <a class="secondary-link" href="{{ url_for('profiles.dashboard', profile_id=active_profile.id) }}">Dashboard</a>
+    {% endif %}
+    <button class="button-link" type="button" data-location-button>Use my location</button>
+  </div>
+</section>
+{% if location_disabled %}
+  <section class="card"><p><span class="chip chip--amber">Live location disabled</span></p><p>Showing results from Chennai city centre.</p></section>
+{% endif %}
+
+<form class="toolbar" method="get">
+  <input name="q" placeholder="Search cardiology, emergency, hospital name..." value="{{ query }}">
+  <button class="text-button" type="submit">Search</button>
+  <a class="secondary-link" href="{{ url_for('hospitals.appointments') }}">Appointments</a>
+</form>
+
+<section class="hospital-layout">
+  <div class="hospital-list">
+    {% for item in hospital_cards %}
+      {% set hospital = item.hospital %}
+      <article class="hospital-record" data-hospital-card data-hospital-name="{{ hospital.name|lower }}" data-hospital-departments="{{ hospital.departments|lower }}">
+        <div class="hospital-record__main">
+          <p><span class="chip">{{ hospital.branch_type|title }}</span> {% if hospital.emergency_available %}<span class="chip chip--rose">Emergency</span>{% endif %}</p>
+          <h2>{{ hospital.name }}</h2>
+          <p>{{ hospital.address }}</p>
+          <p class="muted">{{ hospital.departments }}</p>
+          <p>{{ item.distance }} km | est. {{ item.travel_time }} min | {{ hospital.working_hours }}</p>
+          <div class="hero-actions">
+            <a class="secondary-link" target="_blank" rel="noopener" href="https://www.openstreetmap.org/?mlat={{ hospital.latitude }}&mlon={{ hospital.longitude }}#map=16/{{ hospital.latitude }}/{{ hospital.longitude }}">Open navigation</a>
+            <a class="secondary-link" href="tel:{{ hospital.phone }}">{{ hospital.phone }}</a>
+          </div>
+        </div>
+        <form class="hospital-booking" method="post">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input type="hidden" name="hospital_id" value="{{ hospital.id }}">
+          <label>Date <input name="appointment_date" type="date" required></label>
+          <label>Time <input name="appointment_time" value="10:30" required></label>
+          <label>Reason <input name="reason" value="General consultation" required></label>
+          <button class="button-link" type="submit">Book appointment</button>
+        </form>
+      </article>
+    {% else %}
+      <article class="card">
+        <h2>No hospitals found</h2>
+        <p>Try a different department or hospital name.</p>
+      </article>
+    {% endfor %}
+  </div>
+
+  <aside class="hospital-map card">
+    <h2>Map preview</h2>
+    <div class="map-preview">
+      <iframe title="OpenStreetMap preview" loading="lazy" src="https://www.openstreetmap.org/export/embed.html?bbox=80.18%2C12.96%2C80.32%2C13.13&layer=mapnik&marker={{ user_lat }}%2C{{ user_lon }}"></iframe>
+    </div>
+  </aside>
+</section>
+<section class="timeline-list" data-osm-results></section>
+{% endblock %}

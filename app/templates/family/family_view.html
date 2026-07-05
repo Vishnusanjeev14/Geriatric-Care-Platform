@@ -1,0 +1,15 @@
+{% extends "layouts/base.html" %}
+{% block title %}Family View - CareConnect{% endblock %}
+{% block content %}
+<section class="page-heading"><p class="eyebrow">Family View</p><h1>Shared health summary</h1></section>
+<section class="dashboard-grid">
+  {% for profile in profiles %}
+    <article class="card">
+      <h2>{{ profile.display_name }}</h2>
+      <p>Status: {{ profile.health_status|title }}</p>
+      <p>Medicines and confirmations are visible from each profile dashboard and timeline.</p>
+      <a href="{{ url_for('profiles.timeline', profile_id=profile.id) }}">View timeline</a>
+    </article>
+  {% endfor %}
+</section>
+{% endblock %}

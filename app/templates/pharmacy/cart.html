@@ -1,0 +1,53 @@
+{% extends "layouts/base.html" %}
+{% block title %}Review Cart - CareConnect{% endblock %}
+{% block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">Shopping cart</p>
+    <h1>Review order.</h1>
+    <p class="lede">Order for <strong>{{ profile.display_name }}</strong>. Delivery address is selected from the active profile.</p>
+  </div>
+  <div class="hero-actions">
+    {% if active_profile %}
+      <a class="secondary-link" href="{{ url_for('profiles.dashboard', profile_id=active_profile.id) }}">Dashboard</a>
+    {% endif %}
+    <a class="secondary-link" href="{{ url_for('pharmacy.catalogue') }}">Continue browsing</a>
+  </div>
+</section>
+
+<section class="dashboard-grid dashboard-grid--two">
+  <article class="card">
+    <h2>Cart items</h2>
+    {% for item in cart_items %}
+      <div class="timeline-card">
+        <span class="timeline-dot"></span>
+        <div>
+          <h2>{{ item.medicine.name }}</h2>
+          <p>{{ item.quantity }} {{ item.unit }} | Rs. {{ item.medicine.unit_price }} each</p>
+          <p><strong>Rs. {{ item.line_total }}</strong></p>
+          <form method="post" action="{{ url_for('pharmacy.remove_from_cart', item_index=loop.index0) }}" data-remove-medicine="{{ item.medicine.name|lower }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="text-button" type="submit">Remove</button>
+          </form>
+        </div>
+      </div>
+    {% else %}
+      <p>Your cart is empty.</p>
+    {% endfor %}
+  </article>
+  <aside class="card">
+    <h2>Order summary</h2>
+    <p>Profile: <strong>{{ profile.display_name }}</strong></p>
+    <p>Address: {{ profile.addresses[0].line1 if profile.addresses else "Address required" }}</p>
+    <p class="big-stat">Rs. {{ total }}</p>
+    <form method="post" action="{{ url_for('pharmacy.order') }}" data-order-form>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="button-link" type="submit">Place order</button>
+    </form>
+    <form method="post" action="{{ url_for('pharmacy.clear_cart') }}" data-clear-cart-form>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="text-button" type="submit">Clear cart</button>
+    </form>
+  </aside>
+</section>
+{% endblock %}

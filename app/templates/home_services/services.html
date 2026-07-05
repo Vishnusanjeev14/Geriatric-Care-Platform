@@ -1,0 +1,13 @@
+{% extends "layouts/base.html" %}
+{% block title %}Home Services - CareConnect{% endblock %}
+{% block content %}
+<section class="page-heading"><div><p class="eyebrow">Home services</p><h1>Book household support</h1><p class="lede">Senior-friendly home support for cooking, cleaning, repairs, and daily comfort.</p></div></section>
+<form class="form-card" method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label>Service <select name="service_type">{% for service in service_types %}<option>{{ service }}</option>{% endfor %}</select></label>
+  <label>Scheduled date <input name="scheduled_date" type="date" required></label>
+  <label>Notes <textarea name="notes"></textarea></label>
+  <button class="button-link" type="submit">Book service</button>
+</form>
+<section class="timeline-list">{% for b in bookings %}<article class="timeline-card"><h2>{{ b.service_type }}</h2><p>{{ b.scheduled_date }} · {{ b.status }}</p><p>{{ b.notes }}</p></article>{% else %}<p>No bookings yet.</p>{% endfor %}</section>
+{% endblock %}

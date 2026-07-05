@@ -1,0 +1,77 @@
+{% extends "layouts/base.html" %}
+{% block title %}{{ profile.display_name }} - CareConnect{% endblock %}
+{% block content %}
+<section class="profile-hero">
+  <div class="avatar avatar--large">{{ profile.photo_initials }}</div>
+  <div>
+    <p class="eyebrow">Dashboard</p>
+    <h1>{{ profile.display_name }}</h1>
+    <p>{{ profile.age }} years | {{ profile.blood_group or "Blood group pending" }} | <span class="chip {% if profile.health_status == 'attention' %}chip--amber{% endif %}">{{ profile.health_status|title }}</span></p>
+    <div class="hero-actions">
+      <a class="button-link" href="{{ url_for('profiles.emergency', profile_id=profile.id) }}">Emergency card</a>
+      <a class="secondary-link" href="{{ url_for('profiles.timeline', profile_id=profile.id) }}">Timeline</a>
+      <a class="secondary-link" href="{{ url_for('profiles.edit', profile_id=profile.id) }}">Edit profile</a>
+    </div>
+  </div>
+</section>
+
+<section class="summary-strip">
+  <div class="summary-card"><span>Adherence today</span><strong>{{ schedules[0].adherence_percent if schedules else 100 }}%</strong></div>
+  <div class="summary-card"><span>Due today</span><strong>{{ due_records|length }}</strong></div>
+  <div class="summary-card"><span>Appointments</span><strong>{{ appointments|length }}</strong></div>
+  <div class="summary-card"><span>Caretaker</span><strong>{{ care_request.status|title if care_request else "None" }}</strong></div>
+</section>
+
+<section class="dashboard-grid">
+  <article class="card">
+    <h2>Today's medicines</h2>
+    {% for record in due_records %}
+      <p><strong>{{ record.schedule.medicine.name }}</strong><br>{{ record.dose_period }} | {{ record.dose_time }} | {{ record.schedule.quantity_per_dose }} {{ record.schedule.unit }}</p>
+      <p><span class="chip {% if record.status == 'due' %}chip--amber{% endif %}">{{ record.status|title }}</span></p>
+    {% else %}<p>No medicines scheduled.</p>{% endfor %}
+    <a class="secondary-link" href="{{ url_for('pharmacy.schedules') }}">Open medicine schedule</a>
+  </article>
+  <article class="card">
+    <h2>Upcoming appointment</h2>
+    {% for a in appointments %}
+      <p><strong>{{ a.hospital.name }}</strong><br>{{ a.appointment_date }} at {{ a.appointment_time }}</p>
+      <p><span class="chip chip--lavender">{{ a.reason }}</span></p>
+    {% else %}<p>No appointments.</p>{% endfor %}
+    <a class="secondary-link" href="{{ url_for('hospitals.list_hospitals') }}">Find hospitals</a>
+  </article>
+  <article class="card">
+    <h2>Current caretaker</h2>
+    {% if care_request %}
+      <p><strong>{{ care_request.caretaker.account.full_name if care_request.caretaker else "Pending match" }}</strong></p>
+      <p>{{ care_request.care_type }} | {{ care_request.visit_time }} | {{ care_request.status|title }}</p>
+      <p>{{ care_request.visit_note or care_request.notes }}</p>
+    {% else %}<p>No active caretaker.</p>{% endif %}
+    <a class="secondary-link" href="{{ url_for('care.requests') }}">Open care requests</a>
+  </article>
+  <article class="card">
+    <h2>Health summary</h2>
+    <p>{{ profile.primary_care_note or "No care note recorded." }}</p>
+    {% for c in conditions %}<p><span class="chip chip--amber">{{ c.name }}</span></p>{% endfor %}
+  </article>
+  <article class="card">
+    <h2>Quick actions</h2>
+    <div class="activity-feed">
+      <a class="secondary-link" href="{{ url_for('pharmacy.catalogue') }}">Order medicines</a>
+      <a class="secondary-link" href="{{ url_for('hospitals.list_hospitals') }}">Book appointment</a>
+      <a class="secondary-link" href="{{ url_for('ocr.upload') }}">Upload prescription</a>
+      <a class="secondary-link" href="{{ url_for('care.requests') }}">Request caretaker</a>
+      <a class="secondary-link" href="{{ url_for('home_services.services') }}">Home services</a>
+    </div>
+  </article>
+  <article class="card wide">
+    <h2>Recent timeline</h2>
+    <div class="activity-feed">
+      {% for e in timeline %}
+        <div class="timeline-card"><span class="timeline-dot"></span><div><span>{{ e.source_module|title }}</span><h2>{{ e.title }}</h2><p>{{ e.description }}</p></div></div>
+      {% else %}
+        <p>No timeline events yet.</p>
+      {% endfor %}
+    </div>
+  </article>
+</section>
+{% endblock %}

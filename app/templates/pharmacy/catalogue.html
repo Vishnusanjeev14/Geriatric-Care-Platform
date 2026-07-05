@@ -1,0 +1,64 @@
+{% extends "layouts/base.html" %}
+{% block title %}Pharmacy - CareConnect{% endblock %}
+{% block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">Pharmacy</p>
+    <h1>Find medicines with confidence.</h1>
+    <p class="lede">Search the master catalogue, add medicines to cart, then review profile and delivery details before placing an order.</p>
+  </div>
+  <div class="hero-actions">
+    {% if active_profile %}
+      <a class="secondary-link" href="{{ url_for('profiles.dashboard', profile_id=active_profile.id) }}">Dashboard</a>
+    {% endif %}
+    <a class="button-link" href="{{ url_for('pharmacy.cart') }}">Review cart | {{ cart_count }}</a>
+    <a class="secondary-link" href="{{ url_for('ocr.upload') }}">Upload prescription</a>
+  </div>
+</section>
+
+<form class="toolbar" method="get" data-pharmacy-search-form>
+  <input name="q" placeholder="Search Paracetamol, Metformin, Vitamin D..." value="{{ query }}" data-pharmacy-search>
+  <select name="category_id">
+    <option value="">All categories</option>
+    {% for c in categories %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}
+  </select>
+  <button class="text-button" type="submit">Search</button>
+</form>
+
+<section class="medicine-grid">
+  {% for medicine in medicines %}
+    <article class="card medicine-card" data-medicine-card data-medicine-name="{{ medicine.name|lower }}" data-generic-name="{{ (medicine.generic_name or '')|lower }}">
+      <div>
+        <p><span class="chip">{{ medicine.category.name }}</span> {% if medicine.requires_prescription %}<span class="chip chip--amber">Rx</span>{% endif %}</p>
+        <h2>{{ medicine.name }}</h2>
+        <p>{{ medicine.brand }} | {{ medicine.strength }} | {{ medicine.form }}</p>
+        <p class="muted">{{ medicine.pack_size }} | {{ medicine.manufacturer }}</p>
+      </div>
+      <div>
+        <div class="price-line"><strong>Rs. {{ medicine.unit_price }}</strong><span>Stock {{ medicine.stock_remaining }}</span></div>
+        <a class="secondary-link" href="{{ url_for('pharmacy.new_schedule', medicine_id=medicine.id) }}">Add to profile schedule</a>
+        <form method="post" action="{{ url_for('pharmacy.add_to_cart') }}" data-add-cart-form>
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input type="hidden" name="medicine_id" value="{{ medicine.id }}">
+          <label>Quantity <input name="quantity" type="number" min="1" value="1" required data-cart-quantity></label>
+          <label>Unit
+            <select name="unit" data-cart-unit>
+              <option>Tablets</option>
+              <option>Capsules</option>
+              <option>Sheets / Strips</option>
+              <option>Boxes</option>
+              <option>Bottles</option>
+            </select>
+          </label>
+          <button class="button-link" type="submit">Add to cart</button>
+        </form>
+      </div>
+    </article>
+  {% else %}
+    <article class="card">
+      <h2>No medicines found</h2>
+      <p>Try a different medicine name or clear the search.</p>
+    </article>
+  {% endfor %}
+</section>
+{% endblock %}

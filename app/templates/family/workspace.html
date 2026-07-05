@@ -1,0 +1,71 @@
+{% extends "layouts/base.html" %}
+{% block title %}Family Workspace - CareConnect{% endblock %}
+{% block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">Family Workspace</p>
+    <h1>Good evening, {{ current_account.full_name.split()[0] }}.</h1>
+    <p class="lede">Choose a family member, review activity, and return to the active dashboard whenever you need the central hub.</p>
+  </div>
+  <div class="hero-actions">
+    {% if active_profile %}
+      <a class="button-link" href="{{ url_for('profiles.dashboard', profile_id=active_profile.id) }}">Dashboard</a>
+    {% endif %}
+    <a class="secondary-link" href="{{ url_for('profiles.new_profile') }}">Add profile</a>
+    <a class="secondary-link" href="{{ url_for('family.family_view') }}">Family view</a>
+  </div>
+</section>
+
+<section class="summary-strip" aria-label="Today's summary">
+  <div class="summary-card"><span>Profiles managed</span><strong>{{ profiles|length }}</strong></div>
+  <div class="summary-card"><span>Medicines due</span><strong>2</strong></div>
+  <div class="summary-card"><span>Appointments</span><strong>1 tomorrow</strong></div>
+  <div class="summary-card"><span>Emergency alerts</span><strong>0</strong></div>
+</section>
+
+<section class="dashboard-grid">
+  {% for profile in profiles %}
+    <article class="card profile-card">
+      <div class="avatar">{{ profile.photo_initials }}</div>
+      <p class="eyebrow">{{ profile.relationship_label }}</p>
+      <h2>{{ profile.display_name }}</h2>
+      {% if profile.health_status == "attention" %}
+        <p><span class="chip chip--amber">Medicine due in 20 minutes</span></p>
+        <p>Appointment tomorrow | Last BP 138/86 | Caretaker active</p>
+      {% else %}
+        <p><span class="chip">Everything completed today</span></p>
+        <p>No emergency alerts | Wellness check current</p>
+      {% endif %}
+      <a class="button-link" href="{{ url_for('profiles.select', profile_id=profile.id) }}">Open dashboard</a>
+    </article>
+  {% endfor %}
+
+  <article class="card wide">
+    <h2>Recent family activity</h2>
+    <div class="activity-feed">
+      {% for event in events %}
+        <div class="timeline-card">
+          <span class="timeline-dot" aria-hidden="true"></span>
+          <div>
+            <span>{{ event.profile.display_name }}</span>
+            <h2>{{ event.title }}</h2>
+            <p>{{ event.description }}</p>
+          </div>
+        </div>
+      {% else %}
+        <p>No activity yet.</p>
+      {% endfor %}
+    </div>
+  </article>
+
+  <article class="card">
+    <h2>Notifications</h2>
+    {% for notification in notifications %}
+      <p><span class="chip {% if notification.priority == 'high' %}chip--amber{% endif %}">{{ notification.category|replace("_", " ")|title }}</span></p>
+      <p><strong>{{ notification.title }}</strong><br>{{ notification.message }}</p>
+    {% else %}
+      <p>No urgent notifications.</p>
+    {% endfor %}
+  </article>
+</section>
+{% endblock %}

@@ -1,0 +1,14 @@
+{
+  "nav.family": "குடும்பம்",
+  "nav.pharmacy": "மருந்தகம்",
+  "nav.hospitals": "மருத்துவமனைகள்",
+  "nav.care": "பராமரிப்பு",
+  "nav.emergency": "அவசரம்",
+  "nav.logout": "வெளியேறு",
+  "nav.login": "உள்நுழை",
+  "nav.managing": "நிர்வகிப்பு",
+  "action.add_profile": "சுயவிவரம் சேர்",
+  "action.review_cart": "கார்டை பாருங்கள்",
+  "access.large_text": "பெரிய எழுத்து",
+  "access.high_contrast": "உயர் தெளிவு"
+}

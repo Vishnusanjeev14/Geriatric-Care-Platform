@@ -1,0 +1,34 @@
+{% extends "layouts/base.html" %}
+{% block title %}Create Medicine Schedule - CareConnect{% endblock %}
+{% block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">Medicine schedule</p>
+    <h1>Add {{ medicine.name }} to {{ profile.display_name }}.</h1>
+    <p class="lede">Create reminders that generate dose-level adherence records for family or caretaker confirmation.</p>
+  </div>
+</section>
+<form class="form-card" method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <input type="hidden" name="medicine_id" value="{{ medicine.id }}">
+  <div class="form-grid">
+    <label>Start date <input name="start_date" type="date" required></label>
+    <label>End date <input name="end_date" type="date"></label>
+    <label>Quantity per dose <input name="quantity_per_dose" value="1" required></label>
+    <label>Unit <select name="unit"><option>Tablet</option><option>Capsule</option><option>ml</option><option>Drop</option><option>Puff</option></select></label>
+    <label>Food timing <select name="food_timing"><option>Before Food</option><option selected>After Food</option><option>With Food</option><option>Anytime</option></select></label>
+    <label>Repeat <select name="repeat_pattern"><option>Daily</option><option>Alternate Days</option><option>Weekly</option><option>Custom schedule</option></select></label>
+  </div>
+  <div class="card">
+    <h2>Dose times</h2>
+    <label class="check-row"><input type="checkbox" name="dose_morning" checked> Morning · 08:00</label>
+    <label class="check-row"><input type="checkbox" name="dose_afternoon"> Afternoon · 13:00</label>
+    <label class="check-row"><input type="checkbox" name="dose_evening"> Evening · 18:00</label>
+    <label class="check-row"><input type="checkbox" name="dose_night"> Night · 21:00</label>
+  </div>
+  <label class="check-row"><input type="checkbox" name="forever_medication" checked> Forever medication</label>
+  <label>Repeat days / custom notes <input name="repeat_days" placeholder="Mon, Wed, Fri or custom pattern"></label>
+  <label>Notes <textarea name="notes" placeholder="Any special instructions"></textarea></label>
+  <button class="button-link" type="submit">Create schedule</button>
+</form>
+{% endblock %}

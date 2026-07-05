@@ -1,0 +1,14 @@
+{
+  "nav.family": "Family",
+  "nav.pharmacy": "Pharmacy",
+  "nav.hospitals": "Hospitals",
+  "nav.care": "Care",
+  "nav.emergency": "Emergency",
+  "nav.logout": "Logout",
+  "nav.login": "Login",
+  "nav.managing": "Managing",
+  "action.add_profile": "Add profile",
+  "action.review_cart": "Review cart",
+  "access.large_text": "Large text mode",
+  "access.high_contrast": "High contrast mode"
+}

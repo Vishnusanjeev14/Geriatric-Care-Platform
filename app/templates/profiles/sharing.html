@@ -1,0 +1,12 @@
+{% extends "layouts/base.html" %}
+{% block title %}Family Sharing - CareConnect{% endblock %}
+{% block content %}
+<section class="page-heading"><p class="eyebrow">Family sharing</p><h1>{{ profile.display_name }}</h1></section>
+<form class="form-card" method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label>Email <input name="email" type="email" required></label>
+  <label>Role <select name="role"><option>viewer</option><option>care_manager</option><option>medical_editor</option><option>admin_manager</option></select></label>
+  <button class="button-link" type="submit">Prepare invitation</button>
+</form>
+<section class="card"><h2>Current access</h2>{% for p in permissions %}<p>{{ p.account.full_name }} · {{ p.role }}</p>{% endfor %}</section>
+{% endblock %}

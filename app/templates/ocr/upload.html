@@ -1,0 +1,12 @@
+{% extends "layouts/base.html" %}
+{% block title %}Prescription OCR - CareConnect{% endblock %}
+{% block content %}
+<section class="page-heading"><p class="eyebrow">OCR workflow</p><h1>Upload prescription</h1></section>
+<section class="card"><p><span class="chip chip--amber">Printed prescriptions only</span></p><p>This OCR currently supports printed prescriptions only. Handwritten prescriptions may not be recognised accurately.</p></section>
+<form class="form-card" method="post" enctype="multipart/form-data">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label>Prescription file <input name="prescription" type="file" accept=".pdf,.png,.jpg,.jpeg"></label>
+  <button class="button-link" type="submit">Upload and process OCR</button>
+</form>
+<section class="card"><h2>Recent prescriptions</h2>{% for p in prescriptions %}<p>{{ p.original_filename }} | {{ p.status }}</p>{% else %}<p>No prescriptions uploaded.</p>{% endfor %}</section>
+{% endblock %}

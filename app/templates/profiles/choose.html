@@ -1,0 +1,31 @@
+{% extends "layouts/base.html" %}
+{% block title %}Select Profile - CareConnect{% endblock %}
+{% block content %}
+<section class="profile-select-page">
+  <div class="profile-select-hero">
+    <p class="eyebrow">Managing Profiles</p>
+    <h1>Select who you are caring for.</h1>
+    <p class="lede">CareConnect keeps your account separate from each person's health profile. Choose a profile to open the care dashboard.</p>
+  </div>
+  <section class="profile-selection-grid" aria-label="Managed profiles">
+    {% for profile in profiles %}
+      <a class="profile-select-card" href="{{ url_for('profiles.select', profile_id=profile.id) }}">
+        <span class="avatar">{{ profile.photo_initials }}</span>
+        <strong>{{ profile.display_name }}</strong>
+        <span>{{ profile.relationship_label }} | {{ profile.age }} years</span>
+        <em>{{ profile.health_status|title }}</em>
+      </a>
+    {% else %}
+      <article class="card">
+        <h2>No profiles yet</h2>
+        <p>Create the first care profile to begin.</p>
+      </article>
+    {% endfor %}
+    <a class="profile-select-card profile-select-card--add" href="{{ url_for('profiles.new_profile') }}">
+      <span class="avatar">+</span>
+      <strong>Add New Profile</strong>
+      <span>Create another family care profile</span>
+    </a>
+  </section>
+</section>
+{% endblock %}

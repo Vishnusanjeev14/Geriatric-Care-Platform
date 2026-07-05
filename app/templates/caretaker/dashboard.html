@@ -1,0 +1,114 @@
+{% extends "layouts/base.html" %}
+{% block title %}Caretaker Portal - CareConnect{% endblock %}
+{% block content %}
+{% set caretaker_name = caretaker.account.full_name if caretaker else current_account.full_name %}
+<section class="profile-hero caretaker-hero">
+  <div class="avatar avatar--large">{{ caretaker_name.split()[0][0] }}{{ caretaker_name.split()[-1][0] }}</div>
+  <div>
+    <p class="eyebrow">Caretaker Workspace</p>
+    <h1>{{ caretaker_name }}</h1>
+    <p>{{ caretaker.experience_years if caretaker else 0 }} years experience | {{ caretaker.languages if caretaker else "Languages pending" }} | {{ caretaker.rating if caretaker else "New" }} rating</p>
+    <p>
+      <span class="chip">{{ "Verified" if caretaker and caretaker.verified else "Verification pending" }}</span>
+      <span class="chip {% if caretaker and caretaker.available %}chip--lavender{% else %}chip--amber{% endif %}">{{ "Available" if caretaker and caretaker.available else "Unavailable" }}</span>
+    </p>
+  </div>
+</section>
+
+<section class="caretaker-workspace">
+  <main class="agenda-panel" id="visits">
+    <div class="agenda-header">
+      <div>
+        <p class="eyebrow">Today's agenda</p>
+        <h2>Accepted care visits</h2>
+      </div>
+      <span class="chip">{{ assignments|length }} visits today</span>
+    </div>
+
+    <div class="agenda-list">
+      {% for r in assignments %}
+        <article class="agenda-card">
+          <time>{{ r.visit_time if r.visit_time else "Time pending" }}</time>
+          <div class="agenda-card__body">
+            <h3>{{ r.profile.display_name }}</h3>
+            <p>{{ r.care_type }} | {{ r.duration }}</p>
+            <p class="muted">{{ r.profile.addresses[0].line1 if r.profile.addresses else "Address pending" }}</p>
+            <p><span class="chip">{{ r.status|replace("_", " ")|title }}</span> <span class="chip chip--lavender">{{ r.language or "English" }}</span></p>
+          </div>
+          <div class="agenda-actions">
+            <a class="text-button" target="_blank" rel="noopener" href="https://www.openstreetmap.org/search?query={{ (r.profile.addresses[0].line1 ~ ', ' ~ r.profile.addresses[0].city) | urlencode if r.profile.addresses else 'Chennai' }}">Navigation</a>
+            <form method="post" action="{{ url_for('caretaker_portal.status', request_id=r.id) }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <input type="hidden" name="status" value="in_progress">
+              <input type="hidden" name="visit_note" value="{{ r.visit_note or '' }}">
+              <button class="button-link" type="submit">Quick Check-In</button>
+            </form>
+            <form class="quick-note-form" method="post" action="{{ url_for('caretaker_portal.status', request_id=r.id) }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <input type="hidden" name="status" value="{{ r.status }}">
+              <input name="visit_note" placeholder="Quick notes" value="{{ r.visit_note or '' }}">
+              <button class="text-button" type="submit">Save Note</button>
+            </form>
+          </div>
+        </article>
+      {% else %}
+        <article class="card">
+          <h2>No accepted visits today</h2>
+          <p>Incoming requests appear on the right. Accepted requests for today become agenda cards here.</p>
+        </article>
+      {% endfor %}
+    </div>
+  </main>
+
+  <aside class="incoming-panel">
+    <div class="agenda-header">
+      <div>
+        <p class="eyebrow">Right now</p>
+        <h2>Incoming requests</h2>
+      </div>
+    </div>
+    {% for r in available %}
+      <article class="incoming-card">
+        <p><span class="chip {% if r.emergency_request %}chip--rose{% endif %}">{{ "Emergency" if r.emergency_request else "Request" }}</span></p>
+        <h3>{{ r.profile.display_name }}</h3>
+        <p>{{ r.care_type }} | {{ r.duration }}</p>
+        <p class="muted">{{ r.visit_time if r.visit_time else "Time flexible" }} | {{ r.language or "Any language" }} | 2.4 km away</p>
+        <div class="incoming-actions">
+          <form method="post" action="{{ url_for('caretaker_portal.accept', request_id=r.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="button-link" type="submit">Accept</button>
+          </form>
+          <form method="post" action="{{ url_for('caretaker_portal.decline', request_id=r.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="text-button" type="submit">Decline</button>
+          </form>
+          <details>
+            <summary class="text-button">View Details</summary>
+            <p>{{ r.notes or "No extra request notes." }}</p>
+          </details>
+        </div>
+      </article>
+    {% else %}
+      <p class="muted">No incoming requests right now.</p>
+    {% endfor %}
+  </aside>
+</section>
+
+<section class="dashboard-grid">
+  <article class="card wide" id="calendar">
+    <h2>Weekly calendar</h2>
+    {% for r in upcoming %}
+      <p><strong>{{ r.start_date }} | {{ r.visit_time if r.visit_time else "Time pending" }}</strong> | {{ r.profile.display_name }} | {{ r.care_type }} | {{ r.status|replace("_", " ")|title }}</p>
+    {% else %}
+      <p>No upcoming visits.</p>
+    {% endfor %}
+  </article>
+  <article class="card" id="settings">
+    <h2>Availability editor</h2>
+    <p><span class="chip">Mon</span> 8:00 AM - 5:00 PM</p>
+    <p><span class="chip">Tue</span> 8:00 AM - 5:00 PM</p>
+    <p><span class="chip chip--amber">Wed</span> Leave requested</p>
+    <p class="muted">Availability changes are managed by the care coordinator in this prototype.</p>
+  </article>
+</section>
+{% endblock %}

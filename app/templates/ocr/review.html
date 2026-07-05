@@ -1,0 +1,24 @@
+{% extends "layouts/base.html" %}
+{% block title %}Review OCR - CareConnect{% endblock %}
+{% block content %}
+<section class="page-heading"><div><p class="eyebrow">Manual review</p><h1>Review recognized medicines.</h1><p class="lede">{{ notice }}</p></div></section>
+<section class="dashboard-grid dashboard-grid--two">
+  <article class="card">
+    <h2>Matched medicines</h2>
+    {% for match in matches %}
+      <div class="timeline-card"><span class="timeline-dot"></span><div><h2>{{ match.medicine.name }}</h2><p>{{ match.dosage }} · quantity {{ match.quantity }} · confidence {{ match.confidence }}%</p><p class="muted">{{ match.source_text }}</p></div></div>
+    {% else %}<p>No medicines matched.</p>{% endfor %}
+  </article>
+  <aside class="card">
+    <h2>Unmatched text</h2>
+    {% for item in unmatched %}
+      <label>Manual correction <input value="{{ item.source_text }}"></label>
+      <p><span class="chip chip--amber">Confidence {{ item.confidence }}%</span></p>
+    {% else %}<p>Everything was matched.</p>{% endfor %}
+  </aside>
+</section>
+<form method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <button class="button-link" type="submit">Add matched medicines to cart</button>
+</form>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "layouts/base.html" %}
+{% block title %}Care Requests - CareConnect{% endblock %}
+{% block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">Care requests</p>
+    <h1>Request trusted support.</h1>
+    <p class="lede">Create a care request with language, schedule, urgency, and medical context.</p>
+  </div>
+</section>
+<section class="dashboard-grid dashboard-grid--two">
+  <form class="form-card" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="form-grid">
+      <label>Care type <select name="care_type"><option>Medicine Assistance</option><option>Daily Visit</option><option>Night Care</option><option>Post Surgery</option><option>Mobility Support</option><option>Companion</option></select></label>
+      <label>Language <input name="language" placeholder="English, Spanish"></label>
+      <label>Gender preference <select name="gender_preference"><option>No preference</option><option>Female</option><option>Male</option></select></label>
+      <label>Date <input name="start_date" type="date" required></label>
+      <label>Time <input name="visit_time" value="09:00" required></label>
+      <label>Duration <input name="duration" value="1 week" required></label>
+    </div>
+    <label>Medical conditions <input name="medical_conditions" placeholder="Hypertension, mobility support"></label>
+    <label>Notes <textarea name="notes" placeholder="What should the caretaker know?"></textarea></label>
+    <label class="check-row"><input type="checkbox" name="recurring"> Recurring request</label>
+    <label class="check-row"><input type="checkbox" name="emergency_request"> Emergency request</label>
+    <button class="button-link" type="submit">Submit care request</button>
+  </form>
+  <aside class="card">
+    <h2>Preferred caretakers</h2>
+    {% for caretaker in caretakers %}
+      <p><strong>{{ caretaker.account.full_name }}</strong> <span class="chip">Verified</span><br>{{ caretaker.specialties }} · {{ caretaker.languages }} · {{ caretaker.rating }} rating</p>
+    {% endfor %}
+  </aside>
+</section>
+<section class="dashboard-grid">
+  {% for r in requests %}
+    <article class="card">
+      <p><span class="chip {% if r.emergency_request %}chip--rose{% endif %}">{{ r.status|title }}</span></p>
+      <h2>{{ r.care_type }}</h2>
+      <p>{{ r.start_date }} · {{ r.visit_time }} · {{ r.duration }}</p>
+      <p>{{ r.language or "Any language" }} · {{ r.gender_preference or "No preference" }}</p>
+      <p>{{ r.visit_note or r.notes }}</p>
+      <form method="post" action="{{ url_for('care.note', request_id=r.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>Care note <input name="visit_note" value="{{ r.visit_note or '' }}"></label>
+        <button class="text-button" type="submit">Update note</button>
+      </form>
+    </article>
+  {% else %}<p>No care requests yet.</p>{% endfor %}
+</section>
+{% endblock %}

@@ -1,0 +1,42 @@
+<header class="topbar" role="banner">
+  <nav class="topbar__nav" aria-label="Application bar">
+    {% if current_account %}
+      <button class="menu-button" type="button" aria-label="Open navigation" data-sidebar-toggle>
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    {% endif %}
+    <div class="brand" aria-label="CareConnect">
+      <img class="brand__logo" src="{{ url_for('static', filename='images/careconnect-logo.png') }}" alt="" aria-hidden="true">
+      <span class="brand__text">CareConnect</span>
+    </div>
+    <span></span>
+    <div class="topbar__actions" aria-label="Account actions">
+      {% if current_account %}
+        <a class="home-button" href="{{ url_for('profiles.choose') if current_account.account_type == 'family' else url_for('main.index') }}" aria-label="Home">
+          <span class="home-icon" aria-hidden="true"></span>
+        </a>
+      {% endif %}
+      <button class="utility-toggle" type="button" data-language-toggle aria-label="Switch language">தமிழ்</button>
+      <button class="utility-toggle" type="button" data-theme-toggle aria-label="Toggle light and dark mode">Light</button>
+      {% if current_account %}
+        <button class="user-avatar" type="button" aria-label="Open account menu" data-account-menu-toggle>{{ current_account.full_name.split()[0][0] }}{{ current_account.full_name.split()[-1][0] }}</button>
+        <div class="account-menu" data-account-menu hidden>
+          {% if current_account.account_type == "family" and active_profile %}
+            <a href="{{ url_for('profiles.edit', profile_id=active_profile.id) }}">Edit Profile</a>
+          {% else %}
+            <a href="{{ url_for('auth.account') }}">Edit Profile</a>
+          {% endif %}
+          {% if active_profile %}
+            <a href="{{ url_for('profiles.emergency', profile_id=active_profile.id) }}">Emergency Information</a>
+          {% endif %}
+          <form method="post" action="{{ url_for('auth.logout') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit">Logout</button>
+          </form>
+        </div>
+      {% endif %}
+    </div>
+  </nav>
+</header>
